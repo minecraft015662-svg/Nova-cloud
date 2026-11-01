@@ -15,7 +15,7 @@ nova-cloud/
 ## Setup
 
 1. Create a GitHub repo named `nova-cloud` and upload all three files in this structure.
-2. In `nova.sh`, replace `GITHUB_USER="YOUR_USERNAME"` with your GitHub username.
+2. In `nova.sh`, set `GITHUB_USER` to your GitHub username (already set to `minecraft015662-svg`).
 
 ## Run
 
@@ -35,7 +35,8 @@ Works on Ubuntu and Debian.
 ## Status
 
 - Login: username `admin`, password `admin`. The check runs in the browser only, so change it in `index.html` (function `enter`) before going public.
-- The panel starts empty: no VPS, no nodes, no demo users or files.
+- The panel starts empty: no VPS, no nodes, no demo users or files. Data is saved in the browser (localStorage), so it survives a refresh but is per browser.
+- Creating a node shows its token in the Nodes list. Run `sudo bash nova.sh`, pick 3, and enter the panel URL and that token on the node VPS.
 - A node stays "connecting" until a real node agent reports in. No VPS can be created without an online node.
 - The sshx terminal needs a real VPS: run the shown command inside it.
 - The node agent and the real backend are the next step.

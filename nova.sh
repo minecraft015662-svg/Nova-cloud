@@ -18,24 +18,41 @@ banner() {
 }
 
 install_panel() {
-  echo "[1/3] Installing packages..."
+  echo "[1/4] Installing packages..."
   apt-get update -y && apt-get install -y nginx curl git || { echo "Package installation failed"; return; }
-  echo "[2/3] Downloading the panel..."
+  echo "[2/4] Downloading the panel..."
   rm -rf "$DIR"
-  git clone --depth 1 "$REPO" "$DIR" || { echo "Repo clone failed. Check GITHUB_USER."; return; }
-  echo "[3/3] Nginx setup..."
+  git clone --depth 1 "$REPO" "$DIR" || { echo "Repo clone failed. Check GITHUB_USER and that the repo is public."; return; }
+  # find index.html (works for panel/index.html or index.html in the repo root)
+  if [ -f "$DIR/panel/index.html" ]; then ROOT="$DIR/panel"
+  elif [ -f "$DIR/index.html" ]; then ROOT="$DIR"
+  else echo "index.html not found in the repo."; return; fi
+  chmod -R a+rX "$DIR"
+  echo "[3/4] Nginx setup (root: $ROOT)..."
   cat > /etc/nginx/sites-available/nova-cloud <<EOF
 server {
   listen 80 default_server;
-  root $DIR/panel;
+  listen [::]:80 default_server;
+  server_name _;
+  root $ROOT;
   index index.html;
-  location / { try_files \$uri /index.html; }
+  location / { try_files \$uri \$uri/ /index.html; }
 }
 EOF
   ln -sf /etc/nginx/sites-available/nova-cloud /etc/nginx/sites-enabled/nova-cloud
-  rm -f /etc/nginx/sites-enabled/default
-  nginx -t && systemctl enable --now nginx && systemctl reload nginx
-  echo "Done. Panel: http://$(curl -fsS ifconfig.me 2>/dev/null || echo SERVER_IP)"
+  rm -f /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf
+  nginx -t || { echo "Nginx config test failed"; return; }
+  systemctl enable nginx >/dev/null 2>&1
+  systemctl restart nginx
+  command -v ufw >/dev/null 2>&1 && ufw status | grep -q "Status: active" && ufw allow 80/tcp >/dev/null
+  echo "[4/4] Checking the panel..."
+  code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/)
+  if [ "$code" = "200" ]; then
+    echo "Done. Panel: http://$(curl -fsS ifconfig.me 2>/dev/null || echo SERVER_IP)  (login: admin / admin)"
+  else
+    echo "Panel check failed (HTTP $code). Last nginx errors:"
+    tail -n 5 /var/log/nginx/error.log 2>/dev/null
+  fi
 }
 
 uninstall_panel() {
