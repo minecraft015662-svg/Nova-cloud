@@ -34,5 +34,8 @@ Works on Ubuntu and Debian.
 
 ## Status
 
-- The panel UI is a demo. Users, nodes and VPS are simulated in the browser.
+- Login: username `admin`, password `admin`. The check runs in the browser only, so change it in `index.html` (function `enter`) before going public.
+- The panel starts empty: no VPS, no nodes, no demo users or files.
+- A node stays "connecting" until a real node agent reports in. No VPS can be created without an online node.
+- The sshx terminal needs a real VPS: run the shown command inside it.
 - The node agent and the real backend are the next step.

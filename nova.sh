@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Nova Cloud installer (Ubuntu / Debian)
 # Replace GITHUB_USER with your GitHub username.
-GITHUB_USER="minecraft015662-svg"
+GITHUB_USER="YOUR_USERNAME"
 REPO="https://github.com/${GITHUB_USER}/nova-cloud.git"
 DIR=/opt/nova-cloud
 CONF=/etc/nova-cloud
