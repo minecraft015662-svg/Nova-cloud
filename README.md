@@ -7,7 +7,7 @@ Your own hosting control panel (vPanel).
 ```
 Nova-cloud/
 ├── README.md
-├── nova.sh            # installer menu
+├── nova.sh
 └── panel/
     ├── index.html     # panel UI
     └── server.py      # panel backend (Python 3, no extra packages)
